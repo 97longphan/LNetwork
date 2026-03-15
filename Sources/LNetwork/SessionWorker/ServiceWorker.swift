@@ -21,10 +21,20 @@ open class SessionWorker: ServiceWorker {
     private let session: Session
 
     public init(
-        sessionConfiguration: URLSessionConfiguration? = nil
+        sessionConfiguration: URLSessionConfiguration? = nil,
+        certPinners: [LNetworkCertPinner] = []
     ) {
         let config = sessionConfiguration ?? SessionWorker.defaultConfiguration()
-        self.session = Session(configuration: config)
+        let trustManager: ServerTrustManager? = certPinners.isEmpty ? nil :
+            ServerTrustManager(
+                allHostsMustBeEvaluated: false,
+                evaluators: Dictionary(
+                    uniqueKeysWithValues: certPinners.map {
+                        ($0.domain, SHA256SPKIEvaluator(pinnedHashes: $0.pinnedHashes))
+                    }
+                )
+            )
+        self.session = Session(configuration: config, serverTrustManager: trustManager)
     }
 
     public static func defaultConfiguration() -> URLSessionConfiguration {

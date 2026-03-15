@@ -21,10 +21,14 @@ open class ServiceClient<ResProcessor: ResponseProcessor>: ServiceClientType {
 
     public init(
         sessionConfiguration: URLSessionConfiguration? = nil,
+        certPinners: [LNetworkCertPinner] = [],
         resProcessor: ResProcessor,
         interceptors: [LNetworkInterceptor] = []
     ) {
-        self.worker = SessionWorker(sessionConfiguration: sessionConfiguration)
+        self.worker = SessionWorker(
+            sessionConfiguration: sessionConfiguration,
+            certPinners: certPinners
+        )
         self.resProcessor = resProcessor
         self.interceptors = interceptors
     }
