@@ -10,7 +10,7 @@ public struct InterceptorMapper {
     public static func map(
         networkRequest: any NetworkRequest,
         interceptors: [any LNetworkInterceptor],
-        maxRetries: Int = 3
+        maxRetries: Int = 10
     ) -> Alamofire.Interceptor? {
         guard !interceptors.isEmpty else { return nil }
 
